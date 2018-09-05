@@ -1,8 +1,11 @@
 #ifndef ELECTRIC_WATER_HEATER_H_
 #define ELECTRIC_WATER_HEATER_H_
 
+#include <string>
+#include <map>
+
 #include "universal_control_module.h"
-#include "DistributedEnergyResource.hpp"
+#include "distributed_energy_resource.hpp"
 #include "easylogging++.h"
 #include <cea2045/device/DeviceFactory.h>
 #include <cea2045/communicationport/CEA2045SerialPort.h> 
@@ -10,8 +13,13 @@
 class ElectricWaterHeater : public DistributedEnergyResource {
 public:
 	// Constructor/Destructor
-	ElectricWaterHeater ();
+	ElectricWaterHeater (std::map <std::string, std::string> init);
 	virtual ~ElectricWaterHeater ();
+
+	// (TS): overload inhearited DistributedEnergyResource virtual functions
+	void ImportPower ();
+	void ExportPower ();
+	void Idle ();
 
 	// Get Methods
 	unsigned int GetImportPower ();

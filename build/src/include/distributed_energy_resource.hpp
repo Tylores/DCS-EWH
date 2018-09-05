@@ -1,13 +1,16 @@
 #ifndef DISTRIBUTEDENERGYRESOURCE_H
 #define DISTRIBUTEDENERGYRESOURCE_H
 
+#include <string>
+#include <map>
+
 class DistributedEnergyResource {
     public:
         // constructor / destructor
         DistributedEnergyResource (std::map <std::string, std::string> init);
         virtual ~DistributedEnergyResource ();
         void Loop (float delta_time);
-
+        void Print ();
 
     public:
         // mutators       
@@ -30,16 +33,16 @@ class DistributedEnergyResource {
         unsigned int GetRatedImportPower ();
         unsigned int GetImportPower ();
         unsigned int GetImportEnergy ();
-        unsigned int GetImportRamp ();s
+        unsigned int GetImportRamp ();
         unsigned int GetIdleLosses ();
 
     private:
         // controls
-        // (TS): by making Import/Export Power virtual, they can be redefined
+        // (TS): by making these methods virtual, they can be redefined
         //       within the derived class when inhearited. 
         virtual void ImportPower ();
         virtual void ExportPower ();
-        void IdleLoss ();
+        virtual void Idle ();
 
     private:
         // static properties

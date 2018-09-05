@@ -1,6 +1,5 @@
 
-#include <string>
-#include <map>
+#include <iostream>
 #include "include/distributed_energy_resource.hpp"
 
 DistributedEnergyResource::DistributedEnergyResource (
@@ -204,7 +203,7 @@ void DistributedEnergyResource::ExportPower () {
 
 // Idle Loss
 // - update energy available based on energy lost
-void DistributedEnergyResource::IdleLoss () {
+void DistributedEnergyResource::Idle () {
     float seconds = delta_time_ / 1000;
     float hours = seconds / (60*60);
     float energy_loss = idle_losses_ * hours;
@@ -228,6 +227,17 @@ void DistributedEnergyResource::Loop (float delta_time) {
     } else if (export_watts_ > 0) {
         DistributedEnergyResource::ExportPower ();
     } else {
-        IdleLoss ();
+        DistributedEnergyResource::Idle ();
     }
 }  // end Control
+
+// Print
+// - writes properties to stdout.
+void DistributedEnergyResource::Print () {
+    std::cout << "\n\t[PROPERTIES]"
+        << "\nExport Energy\t" << export_energy_ << "\t(watt-hours)"
+        << "\nExport Power\t" << export_power_ << "\t(watts)"
+        << "\nImport Energy\t" << import_energy_ << "\t(watts-hours)"
+        << "\nImport Power\t" << import_power_  << "\t(watts)"
+        << std::endl;
+}  // end Print

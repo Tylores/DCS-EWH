@@ -1,9 +1,10 @@
 #include <iostream>
-#include <string>
 #include "include/electric_water_heater.hpp"
 
 
-ElectricWaterHeater::ElectricWaterHeater () : sp_("/dev/ttyUSB0") {
+ElectricWaterHeater::ElectricWaterHeater (
+	std::map <std::string, std::string> init) 
+	: DistributedEnergyResource(init), sp_("/dev/ttyUSB0") {
 	if (!sp_.open ()) {
 		LOG(ERROR) << "failed to open serial port: " << strerror(errno);
 		exit (1);
@@ -55,21 +56,27 @@ void ElectricWaterHeater::UpdateCommodityData () {
 	}
 }  // end Update Commodity Data
 
-// Loop
-// - 
-void ElectricWaterHeater::Loop () {
-	ElectricWaterHeater::UpdateCommodityData ();
-	device_ptr_->basicQueryOperationalState ();
+// Import Power
+// - stop load shed to turn elements on and consume power from the grid
+// - "Normal" operation means the elements should already be on if the
+// - temperature is below the set-point
+void ElectricWaterHeater::ImportPower () {
 	if (import_watts_ > 0 
 		&& import_energy_ > 0 
-		&& ucm_.GetOpState () == OpState::IDLE) {
+		&& ucm_.GetOpState () != OpState::NORMAL) {
 		device_ptr_->basicEndShed (0);
-	} else {
-		device_ptr_->basicShed (64);
 	}
-}  // end Loop
+}  // end Import Power
 
-void ElectricWaterHeater::Print () {
-	std::cout << "Import Power:\t" << import_power_ << "\twatts\n";
-	std::cout << "Import Energy:\t" << import_energy_ << "\twatt-hours\n";
-}  // end Print
+// Export Power
+// - export power is not possible for a water heater.
+void ElectricWaterHeater::ExportPower () {
+	// do nothing
+}  // end Export Power
+
+// Idle
+// - shed load until either DERAS sends import command or temperature
+// - falls below customer comfort levels.
+void ElectricWaterHeater::Idle () {
+	device_ptr_->basicShed(8);
+}  // end Import Power

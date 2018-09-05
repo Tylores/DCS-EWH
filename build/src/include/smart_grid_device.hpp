@@ -25,7 +25,7 @@
 #ifndef SMARTGRIDDEVICE_HPP_INCLUDED
 #define SMARTGRIDDEVICE_HPP_INCLUDED
 
-#include "DistributedEnergyResource.hpp"
+#include "distributed_energy_resource.hpp"
 
 class SmartGridDevice : public ajn::BusObject {
 public:
