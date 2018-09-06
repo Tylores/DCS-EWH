@@ -1,9 +1,9 @@
 #include <iostream>
 #include "include/electric_water_heater.hpp"
-
+#include "easylogging++.h"
 
 ElectricWaterHeater::ElectricWaterHeater (
-	std::map <std::string, std::string> init) 
+	std::map <std::string, std::string> &init) 
 	: DistributedEnergyResource(init), sp_("/dev/ttyUSB0") {
 	if (!sp_.open ()) {
 		LOG(ERROR) << "failed to open serial port: " << strerror(errno);

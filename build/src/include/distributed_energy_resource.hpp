@@ -7,7 +7,7 @@
 class DistributedEnergyResource {
     public:
         // constructor / destructor
-        DistributedEnergyResource (std::map <std::string, std::string> init);
+        DistributedEnergyResource (std::map <std::string, std::string> &init);
         virtual ~DistributedEnergyResource ();
         void Loop (float delta_time);
         void Print ();

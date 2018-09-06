@@ -42,9 +42,12 @@
 #include "include/electric_water_heater.hpp"
 #include "include/server_listener.hpp"
 #include "include/smart_grid_device.hpp"
+#include "include/easylogging++.h"
 
 using namespace std;
 using namespace ajn;
+
+INITIALIZE_EASYLOGGINGPP
 
 bool done = false;  //signals program to stop
 
@@ -106,7 +109,7 @@ static map<string, string> CommandLineParse (int argc, char** argv) {
 // Command Line Interface
 // - method to allow user controls during program run-time
 static bool CommandLineInterface (const string& input, 
-                                  DistributedEnergyResource *DER) {
+                                  ElectricWaterHeater *DER) {
     // check for program argument
     if (input == "") {
         return false;
@@ -161,7 +164,7 @@ static bool CommandLineInterface (const string& input,
     return false;
 }  // end Command Line Interface
 
-void ResourceLoop (DistributedEnergyResource *DER) {
+void ResourceLoop (ElectricWaterHeater *DER) {
     unsigned int time_remaining, time_past;
     unsigned int time_wait = 500;
     auto time_start = chrono::high_resolution_clock::now();
@@ -201,6 +204,10 @@ int main (int argc, char** argv) {
     cout << "\n\tMapping configuration file...\n";
     string config_file = parameters.at("config");
     tsu::config_map ini_map = tsu::MapConfigFile(config_file);
+
+    el::Configurations conf("../data/easy_logger.conf");
+    // Actually reconfigure all loggers instead
+    el::Loggers::reconfigureAllLoggers(conf);
 
     cout << "\n\tStarting AllJoyn...\n";
 
@@ -249,8 +256,8 @@ int main (int argc, char** argv) {
     }
 
     cout << "\n\t\tLooking for resource...\n";
-    DistributedEnergyResource *der_ptr = 
-        new DistributedEnergyResource (ini_map["DER"]);
+    ElectricWaterHeater *der_ptr = 
+        new ElectricWaterHeater (ini_map["DER"]);
 
     cout << "\n\t\tCreating observer...\n";
     string server_interface = ini_map["AllJoyn"]["server_interface"];
@@ -275,7 +282,7 @@ int main (int argc, char** argv) {
 
     cout << "\n\t\t\tRegistering bus object...\n";
     if (ER_OK != bus_ptr->RegisterBusObject(*sgd_ptr)){
-        printf("\n\t\t\t[ERROR] failed registration...\n");
+        cout << "\n\t\t\t[ERROR] failed registration...\n";
         delete &sgd_ptr;
         return EXIT_FAILURE;
     }

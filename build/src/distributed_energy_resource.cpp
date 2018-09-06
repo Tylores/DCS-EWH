@@ -3,7 +3,7 @@
 #include "include/distributed_energy_resource.hpp"
 
 DistributedEnergyResource::DistributedEnergyResource (
-    std::map <std::string, std::string> init) :
+    std::map <std::string, std::string> &init) :
     rated_export_power_(stoul(init["ExportPower"])),
     rated_export_energy_(stoul(init["ExportEnergy"])),
     export_ramp_(stoul(init["ExportRamp"])),
